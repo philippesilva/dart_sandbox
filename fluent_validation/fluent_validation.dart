@@ -16,41 +16,42 @@ class ValidationResult {
   }
 }
 
-abstract class AbstractFluentValidation<T> {
-  ValidationResult validate<T>(T value);
+class Item {
+  String property;
+  ValidationType type;
+  String message;
+  Function function;
+
+  Item(this.property, this.type, this.message, this.function);
+}
+
+class Validation {
+  static bool isEmail(String email) {
+    return true;
+  }
 }
 
 class FluentValidation<T> {
+  List<Item> _items = [];
+
   RuleFor<T>(String property, ValidationType type, String messageError) {
-    return this;
+    _items.add(Item(property, type, messageError, (){});
   }
 
   RuleForMust(String property, Function function, String messageError) {
     return this;
   }
 
-  ValidationResult superValidate<T>() {
-    RuleFor("nome", ValidationType.notEmpty, "Not empty");
-    RuleFor("nome", ValidationType.notNull, "Not null");
-    RuleForMust("nome", () {}, "Default");
-
+  ValidationResult validate<T>(T value) {
     return ValidationResult();
   }
 }
 
-class UserValidator extends FluentValidation
-    implements AbstractFluentValidation<User> {
-  @override
-  ValidationResult validate<T>(T value) {
-    // Your code
-
-    RuleFor("nome", ValidationType.notEmpty, "Not empty");
-    RuleFor("nome", ValidationType.notNull, "Not null");
-    RuleForMust("nome", () {}, "Default");
-
-    // return default
-
-    return this.superValidate();
+class UserValidator extends FluentValidation<User> {
+  UserValidator() {
+    RuleFor("name", ValidationType.notEmpty, "Not empty");
+    RuleFor("name", ValidationType.notNull, "Not null");
+    RuleForMust("name", () {}, "Default");
   }
 }
 
